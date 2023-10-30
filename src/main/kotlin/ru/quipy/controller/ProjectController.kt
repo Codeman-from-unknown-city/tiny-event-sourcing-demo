@@ -35,8 +35,8 @@ class ProjectController(
     }
 
     @PostMapping("/{projectId}/status")
-    fun createStatus(@PathVariable projectId: UUID, @RequestBody title: String) : StatusCreatedEvent {
-        return projectEsService.update(projectId) { it.addStatus (title) }
+    fun createStatus(@PathVariable projectId: UUID, @RequestBody title: String, @RequestBody color: String) : StatusCreatedEvent {
+        return projectEsService.update(projectId) { it.addStatus (title, color) }
     }
 
     @DeleteMapping("/{projectId}/status/{statusId}")
@@ -60,5 +60,10 @@ class ProjectController(
     @PatchMapping("/{projectId}/tasks/{taskId}/changeStatus/{newStatusId}")
     fun changeTaskStatus(@PathVariable projectId: UUID, @PathVariable taskId: UUID, @PathVariable newStatusId: UUID): TaskStatusChangedEvent {
         return projectEsService.update(projectId){ it.changeTaskStatus(taskId, newStatusId) }
+    }
+
+    @PatchMapping("/{projectId}/tasks/{taskId}/assign/{userId}")
+    fun memberAssignToTask(@PathVariable projectId: UUID, @PathVariable taskId: UUID, @PathVariable userId: UUID) : MemberAssignedToTaskEvent {
+        return projectEsService.update(projectId){ it.memberAssignedToTask(userId, taskId) }
     }
 }

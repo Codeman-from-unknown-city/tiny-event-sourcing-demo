@@ -34,14 +34,6 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
     }
 
     @StateTransitionFunc
-    fun projectChangedNameApply(event: ProjectCreatedEvent) {
-        projectId = event.projectId
-        projectTitle = event.title
-        creatorId = event.creatorId
-        projectMemberIds.add(creatorId)
-    }
-
-    @StateTransitionFunc
     fun addUserToProjectApply(event: AddUserToProjectEvent) {
         projectMemberIds.add(event.userId)
     }
