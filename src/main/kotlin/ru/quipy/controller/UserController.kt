@@ -17,7 +17,7 @@ class UserController(
     val userViewService: UserViewService,
 ) {
 
-    @PostMapping("/create")
+    @PostMapping("/")
     fun addUser(@RequestParam name: String,
                 @RequestParam nickname: String,
                 @RequestParam password: String) : UserCreatedEvent {
@@ -29,9 +29,9 @@ class UserController(
         return userEsService.getState(userId)
     }
 
-    @GetMapping("/{nickname}/exists")
+    @GetMapping("/{nickname}")
     fun checkIfNicknameExists(@PathVariable nickname: String) : Boolean {
-        return userViewService.findByNickName(nickname) != null;
+        return userViewService.findByNickName(nickname) != null
     }
 
     @GetMapping("/findByNicknameSubstr/{nicknameSubstr}")
@@ -39,7 +39,7 @@ class UserController(
         return userViewService.findByNameSubs(nicknameSubstr)
     }
 
-    @PostMapping("/{userId}/change")
+    @PostMapping("/{userId}")
     fun changeUserName(@PathVariable userId: UUID, @RequestParam newName: String) : UserChangedNameEvent {
         return userEsService.update(userId) {
             it.changeName(newName)

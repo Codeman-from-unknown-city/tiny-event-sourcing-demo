@@ -17,7 +17,7 @@ class UserViewService(
     @SubscribeEvent
     fun saveUser(event: UserCreatedEvent) {
         userRepository.save(
-            UserViewDomain.User(event.id, event.firstname, event.nickname, event.password)
+            UserViewDomain.User(event.id, event.firstname, event.nickname)
         )
     }
 
