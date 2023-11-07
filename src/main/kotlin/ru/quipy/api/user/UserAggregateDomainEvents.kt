@@ -26,6 +26,6 @@ class UserChangedNameEvent(
     val newName: String,
     createdAt: Long = System.currentTimeMillis(),
 ) : Event<UserAggregate>(
-    name = USER_CREATED_EVENT,
+    name = USER_CHANGED_NAME_EVENT,
     createdAt = createdAt,
 )
