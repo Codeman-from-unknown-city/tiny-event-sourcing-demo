@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.*
 import ru.quipy.api.user.UserChangedNameEvent
 import ru.quipy.api.user.UserCreatedEvent
 import ru.quipy.core.EventSourcingService
-import ru.quipy.projections.UserViewDomain
-import ru.quipy.projections.UserViewService
+import ru.quipy.projections.user.UserViewDomain
+import ru.quipy.projections.user.UserViewService
 import ru.quipy.aggregate.user.UserAggregate
 import ru.quipy.aggregate.user.UserAggregateState
 import ru.quipy.aggregate.user.changeName

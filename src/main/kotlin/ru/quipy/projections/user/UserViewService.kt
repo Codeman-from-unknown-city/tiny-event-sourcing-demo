@@ -1,4 +1,4 @@
-package ru.quipy.projections
+package ru.quipy.projections.user
 
 import org.springframework.stereotype.Service
 import ru.quipy.aggregate.user.UserAggregate

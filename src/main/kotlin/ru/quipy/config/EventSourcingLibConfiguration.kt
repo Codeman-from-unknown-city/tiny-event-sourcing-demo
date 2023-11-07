@@ -9,8 +9,8 @@ import ru.quipy.aggregate.user.UserAggregate
 import ru.quipy.core.EventSourcingServiceFactory
 import ru.quipy.aggregate.project.ProjectAggregateState
 import ru.quipy.aggregate.user.UserAggregateState
-import ru.quipy.projections.AnnotationBasedProjectEventsSubscriber
-import ru.quipy.projections.UserViewService
+import ru.quipy.projections.project.AnnotationBasedProjectEventsSubscriber
+import ru.quipy.projections.user.UserViewService
 import ru.quipy.streams.AggregateEventStreamManager
 import ru.quipy.streams.AggregateSubscriptionsManager
 import java.util.*
