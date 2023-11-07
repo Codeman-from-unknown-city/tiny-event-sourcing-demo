@@ -3,9 +3,9 @@ package ru.quipy.projections
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import ru.quipy.api.ProjectAggregate
-import ru.quipy.api.TagCreatedEvent
-import ru.quipy.api.TaskCreatedEvent
+import ru.quipy.aggregate.project.ProjectAggregate
+import ru.quipy.api.project.StatusCreatedEvent
+import ru.quipy.api.project.TaskCreatedEvent
 import ru.quipy.streams.annotation.AggregateSubscriber
 import ru.quipy.streams.annotation.SubscribeEvent
 
@@ -19,11 +19,11 @@ class AnnotationBasedProjectEventsSubscriber {
 
     @SubscribeEvent
     fun taskCreatedSubscriber(event: TaskCreatedEvent) {
-        logger.info("Task created: {}", event.taskName)
+        logger.info("Task created: {}", event.name)
     }
 
     @SubscribeEvent
-    fun tagCreatedSubscriber(event: TagCreatedEvent) {
-        logger.info("Tag created: {}", event.tagName)
+    fun statusCreatedSubscriber(event: StatusCreatedEvent) {
+        logger.info("Tag created: {}", event.statusName)
     }
 }
