@@ -1,6 +1,6 @@
-package ru.quipy.logic
+package ru.quipy.aggregate.project
 
-import ru.quipy.api.*
+import ru.quipy.api.project.*
 import java.util.*
 
 
@@ -57,11 +57,11 @@ fun ProjectAggregateState.addTask(name: String): TaskCreatedEvent {
     return TaskCreatedEvent(projectId = this.getId(), taskId = UUID.randomUUID(), title = name)
 }
 
-fun ProjectAggregateState.changeTaskTitle(taskId: UUID, title: String): TaskTitleChangedEvent{
+fun ProjectAggregateState.changeTaskTitle(taskId: UUID, title: String): TaskTitleChangedEvent {
     return  TaskTitleChangedEvent(taskId = taskId, title = title)
 }
 
-fun ProjectAggregateState.changeTaskStatus(taskId: UUID, statusId: UUID): TaskStatusChangedEvent{
+fun ProjectAggregateState.changeTaskStatus(taskId: UUID, statusId: UUID): TaskStatusChangedEvent {
     if (!projectStatus.containsKey(statusId)){
         throw IllegalArgumentException("Status doesn't exists: $statusId")
     }

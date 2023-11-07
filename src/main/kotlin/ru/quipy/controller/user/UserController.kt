@@ -1,13 +1,15 @@
-package ru.quipy.controller
+package ru.quipy.controller.user
 
 import org.springframework.web.bind.annotation.*
-import ru.quipy.api.*
+import ru.quipy.api.user.UserChangedNameEvent
+import ru.quipy.api.user.UserCreatedEvent
 import ru.quipy.core.EventSourcingService
-import ru.quipy.logic.UserAggregateState
-import ru.quipy.logic.changeName
-import ru.quipy.logic.create
 import ru.quipy.projections.UserViewDomain
 import ru.quipy.projections.UserViewService
+import ru.quipy.aggregate.user.UserAggregate
+import ru.quipy.aggregate.user.UserAggregateState
+import ru.quipy.aggregate.user.changeName
+import ru.quipy.aggregate.user.create
 import java.util.*
 
 @RestController

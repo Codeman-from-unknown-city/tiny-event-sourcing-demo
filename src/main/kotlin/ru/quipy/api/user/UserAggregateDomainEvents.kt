@@ -1,7 +1,8 @@
-package ru.quipy.api
+package ru.quipy.api.user
 
 import ru.quipy.core.annotations.DomainEvent
 import ru.quipy.domain.Event
+import ru.quipy.aggregate.user.UserAggregate
 import java.util.*
 
 const val USER_CREATED_EVENT = "USER_CREATED_EVENT"

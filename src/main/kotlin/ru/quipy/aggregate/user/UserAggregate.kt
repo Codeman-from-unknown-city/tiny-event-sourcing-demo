@@ -1,4 +1,4 @@
-package ru.quipy.api
+package ru.quipy.aggregate.user
 
 import ru.quipy.core.annotations.AggregateType
 import ru.quipy.domain.Aggregate

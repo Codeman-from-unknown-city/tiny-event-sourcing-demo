@@ -1,9 +1,9 @@
-package ru.quipy.controller
+package ru.quipy.controller.project
 
 import org.springframework.web.bind.annotation.*
-import ru.quipy.api.*
+import ru.quipy.api.project.*
 import ru.quipy.core.EventSourcingService
-import ru.quipy.logic.*
+import ru.quipy.aggregate.project.*
 import java.util.*
 
 @RestController
