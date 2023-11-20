@@ -30,11 +30,11 @@ class StatusTasksService(
             val prevStatus = prevStatus.get()
             statusTasksRepository.updateById(prevStatus.id, Status(
                 prevStatus.id,
-                prevStatus.tasks.filter { tid -> tid != event.taskId }
+                    prevStatus.tasks.filter { tid -> tid != event.taskId } as MutableList<UUID>
             ))
         }
         val newStatus = statusTasksRepository.findById(event.statusId).get()
-        newStatus.tasks.addLast(event.taskId)
+        newStatus.tasks.add(event.taskId)
         statusTasksRepository.updateById(event.statusId, newStatus)
     }
 

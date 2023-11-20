@@ -8,5 +8,5 @@ import java.util.*
 data class Status(
     @Id
     val id: UUID,
-    val tasks: List<UUID>,
+    val tasks: MutableList<UUID>,
 )
