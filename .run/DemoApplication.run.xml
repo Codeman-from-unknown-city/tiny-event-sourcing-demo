@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DemoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="ALTERNATIVE_JRE_PATH" value="21" />
+    <module name="demo" />
+    <target name="app" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ru.quipy.DemoApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Mongo" run_configuration_type="docker-deploy" />
+    </method>
+  </configuration>
+</component>

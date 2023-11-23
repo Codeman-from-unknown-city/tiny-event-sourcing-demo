@@ -1,12 +1,20 @@
 version: "3.9"
 services:
+  app:
+    image: openjdk:21
+    command: sh -c "./mvnw package && java -jar target/*.jar"
+    working_dir: /app
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      - ./:/app
+      - ~/.m2:/root/.m2
+    depends_on:
+      - mongo
   mongo:
     build:
       context: mongoDb
-#      dockerfile: mongoDb/Dockerfile
     restart: always
-    ports:
-      - 27017:27017
     volumes:
       - mongo_data:/data/db
 volumes:
