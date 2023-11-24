@@ -4,7 +4,6 @@ import ru.quipy.api.user.UserChangedNameEvent
 import ru.quipy.api.user.UserCreatedEvent
 import ru.quipy.core.annotations.StateTransitionFunc
 import ru.quipy.domain.AggregateState
-import ru.quipy.projections.user.UserProjection
 import java.util.UUID
 
 class UserAggregateState : AggregateState<UUID, UserAggregate> {

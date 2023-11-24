@@ -1,7 +1,5 @@
 package ru.quipy.controller.user
 
-import org.slf4j.LoggerFactory
-import org.springframework.dao.NonTransientDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -9,8 +7,7 @@ import ru.quipy.aggregate.user.*
 import ru.quipy.api.user.UserChangedNameEvent
 import ru.quipy.api.user.UserCreatedEvent
 import ru.quipy.core.EventSourcingService
-import ru.quipy.projections.user.User
-import ru.quipy.projections.user.UserProjection
+import ru.quipy.service.user.UserService
 import java.lang.IllegalArgumentException
 import java.util.*
 
@@ -18,7 +15,7 @@ import java.util.*
 @RequestMapping("/users")
 class UserController(
     val userEsService: EventSourcingService<UUID, UserAggregate, UserAggregateState>,
-    val userProjection: UserProjection,
+    val userService: UserService
 
 ) {
     @PostMapping
@@ -26,34 +23,25 @@ class UserController(
                 @RequestParam nickname: String,
                 @RequestParam password: String) : UserCreatedEvent {
         try {
-            return userEsService.create {
-                it.create(UUID.randomUUID(), name, nickname, password,
-                    userProjection)
-            }
+            return userEsService.create { it.create(UUID.randomUUID(), name, nickname, password, userService) }
         } catch (e: UserAggregateError) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
         }
     }
 
-    @GetMapping("/id/{userId}")
-    fun checkIfIdExists(@PathVariable userId: UUID) : Boolean
-        = userProjection.findById(userId).isPresent
-
-    @GetMapping("/{userId}")
-    fun getUser(@PathVariable userId: UUID) : User {
-        val user = userProjection.findById(userId)
-        if (user.isEmpty)
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        return user.get()
-    }
+    @GetMapping("{id}/tasks")
+    fun getUserTasks(@PathVariable id: UUID) = userService.findUserTasks(id)
 
     @GetMapping("/nickname/{nickname}")
-    fun checkIfNicknameExists(@PathVariable nickname: String) : Boolean
-        = userProjection.findByNickName(nickname).isPresent
+    fun checkIfNicknameExists(@PathVariable nickname: String) = userService.checkIfUserExists(nickname)
 
-    @GetMapping("/findByNicknameSubstr/{nicknameSubstr}")
-    fun findByNicknameSubstr(@PathVariable nicknameSubstr: String) : List<User>
-        = userProjection.findByNickNameSubs(nicknameSubstr)
+    @GetMapping("/substr/{field}/{substr}")
+    fun findByNicknameSubstr(@PathVariable field: String, @PathVariable substr: String) =
+        when (field) {
+            "nickname" -> userService.findByNicknameSubstr(substr)
+            "name" -> userService.findByNameSubstr(substr)
+            else -> throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unexpected field: $field")
+        }
 
     @PostMapping("/{userId}")
     fun changeUserName(@PathVariable userId: UUID,

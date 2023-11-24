@@ -4,12 +4,14 @@ import org.springframework.web.bind.annotation.*
 import ru.quipy.api.project.*
 import ru.quipy.core.EventSourcingService
 import ru.quipy.aggregate.project.*
+import ru.quipy.projections.task.TaskProjection
 import java.util.*
 
 @RestController
 @RequestMapping("/projects")
 class ProjectController(
-    val projectEsService: EventSourcingService<UUID, ProjectAggregate, ProjectAggregateState>
+    val projectEsService: EventSourcingService<UUID, ProjectAggregate, ProjectAggregateState>,
+    val taskProjection: TaskProjection,
 ) {
 
     @PostMapping("/{projectTitle}")
@@ -41,7 +43,7 @@ class ProjectController(
 
     @DeleteMapping("/{projectId}/status/{statusId}")
     fun removeStatus(@PathVariable projectId: UUID, @PathVariable statusId: UUID): StatusDeletedEvent {
-        return projectEsService.update(projectId){ it.removeStatus(statusId, projectId) }
+        return projectEsService.update(projectId){ it.removeStatus(statusId, projectId, taskProjection) }
     }
 
 

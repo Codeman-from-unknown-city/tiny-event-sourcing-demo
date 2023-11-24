@@ -2,7 +2,7 @@ package ru.quipy.aggregate.user
 
 import ru.quipy.api.user.UserChangedNameEvent
 import ru.quipy.api.user.UserCreatedEvent
-import ru.quipy.projections.user.UserProjection
+import ru.quipy.service.user.UserService
 import java.util.*
 
 class UserAggregateError(message: String?): Error(message)
@@ -12,9 +12,9 @@ fun UserAggregateState.create(
     name: String,
     nickname: String,
     password: String,
-    userProjection: UserProjection
+    userService: UserService
 ): UserCreatedEvent {
-    if (userProjection.findById(id).isPresent)
+    if (userService.checkIfUserExists(id))
         throw UserAggregateError("User with `$id` id already exists")
     if (name.isBlank() || nickname.isBlank() || password.isBlank())
         throw UserAggregateError("Name, nickname and password mustn't be blank")

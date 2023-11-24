@@ -1,7 +1,7 @@
 package ru.quipy.aggregate.project
 
 import ru.quipy.api.project.*
-import ru.quipy.projections.statusTask.StatusTasksService
+import ru.quipy.projections.task.TaskProjection
 import java.util.*
 
 
@@ -9,7 +9,12 @@ import java.util.*
 // Here the commands are represented by extension functions, but also can be the class member functions
 
 fun ProjectAggregateState.create(id: UUID, title: String, creatorId: UUID): ProjectCreatedEvent {
-    return ProjectCreatedEvent(projectId = id, title = title, creatorId = creatorId)
+    return ProjectCreatedEvent(
+        projectId = id,
+        title = title,
+        creatorId = creatorId,
+        defaultStatus = StatusEntity.default(projectId = id)
+    )
 }
 
 fun ProjectAggregateState.addUser(projectId: UUID, userId: UUID): AddUserToProjectEvent {
@@ -38,14 +43,14 @@ fun ProjectAggregateState.addStatus(name: String, color: String): StatusCreatedE
 fun ProjectAggregateState.removeStatus(
     statusId: UUID,
     projectId: UUID,
-    statusTasksService: StatusTasksService
+    taskProjection: TaskProjection
 ): StatusDeletedEvent {
     if (!projectStatus.containsKey(statusId)){
         throw IllegalArgumentException("Status doesn't exists: $statusId")
     }
 
-    val statusTasks = statusTasksService.getStatusTasks(statusId)
-    if (statusTasks.isPresent && statusTasks.get().isNotEmpty())
+    val tasks = taskProjection.findAllByStatusId(statusId)
+    if (tasks.toList().isNotEmpty())
         throw IllegalArgumentException("Status has tasks")
 
     var statusIsUsed = false;
@@ -90,12 +95,12 @@ fun ProjectAggregateState.memberAssignedToTask(userId: UUID, taskId: UUID): Memb
 
     this.tasks.forEach { element ->
         if (element.value.id == taskId){
-            taskNotExist = true;
+            taskNotExist = false;
         }
     }
 
     if (userNotExist){
-        throw IllegalArgumentException("User not exist: $userId")
+        throw IllegalArgumentException("User not exist: $userId $creatorId")
     }
 
     if (taskNotExist){
