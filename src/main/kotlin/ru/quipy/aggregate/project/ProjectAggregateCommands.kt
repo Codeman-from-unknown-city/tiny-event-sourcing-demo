@@ -2,6 +2,7 @@ package ru.quipy.aggregate.project
 
 import ru.quipy.api.project.*
 import ru.quipy.projections.task.TaskProjection
+import ru.quipy.projections.user.UserProjection
 import java.util.*
 
 
@@ -53,17 +54,6 @@ fun ProjectAggregateState.removeStatus(
     if (tasks.toList().isNotEmpty())
         throw IllegalArgumentException("Status has tasks")
 
-    var statusIsUsed = false;
-    this.tasks.forEach { element ->
-        if (element.value.status == statusId){
-            statusIsUsed = true;
-        }
-    }
-
-    if (statusIsUsed){
-        throw IllegalArgumentException("Status is used: $statusId")
-    }
-
     return StatusDeletedEvent(statusId, projectId)
 }
 
@@ -83,28 +73,16 @@ fun ProjectAggregateState.changeTaskStatus(taskId: UUID, statusId: UUID): TaskSt
     return TaskStatusChangedEvent(taskId = taskId, statusId = statusId)
 }
 
-fun ProjectAggregateState.memberAssignedToTask(userId: UUID, taskId: UUID): MemberAssignedToTaskEvent{
-    var userNotExist = true;
-    var taskNotExist = true;
-
-    this.projectMemberIds.forEach { element ->
-        if (element == userId){
-            userNotExist = false;
-        }
-    }
-
-    this.tasks.forEach { element ->
-        if (element.value.id == taskId){
-            taskNotExist = false;
-        }
-    }
-
-    if (userNotExist){
-        throw IllegalArgumentException("User not exist: $userId $creatorId")
-    }
-
-    if (taskNotExist){
+fun ProjectAggregateState.memberAssignedToTask(userId: UUID,
+                                               taskId: UUID,
+                                               taskProjection: TaskProjection,
+                                               userProjection: UserProjection): MemberAssignedToTaskEvent{
+    if (!taskProjection.findById(taskId).isPresent){
         throw IllegalArgumentException("Task not exist: $taskId")
+    }
+
+    if (!userProjection.findById(userId).isPresent){
+        throw IllegalArgumentException("User not exist: $userId")
     }
 
     return MemberAssignedToTaskEvent(taskId = taskId, userId = userId)
