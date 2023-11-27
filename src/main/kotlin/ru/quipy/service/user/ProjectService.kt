@@ -47,8 +47,4 @@ class ProjectService {
             }
         }.toMutableList()
     }
-
-    fun getAllProjects(): MutableList<ProjectView> {
-        return ProjectView.fromProjection(projectProjection.findAll())
-    }
 }

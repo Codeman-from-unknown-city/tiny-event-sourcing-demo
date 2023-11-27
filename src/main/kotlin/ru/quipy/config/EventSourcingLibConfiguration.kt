@@ -1,5 +1,6 @@
 package ru.quipy.config
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -9,6 +10,7 @@ import ru.quipy.aggregate.user.UserAggregate
 import ru.quipy.core.EventSourcingServiceFactory
 import ru.quipy.aggregate.project.ProjectAggregateState
 import ru.quipy.aggregate.user.UserAggregateState
+import ru.quipy.projections.project.ProjectProjectionService
 import ru.quipy.projections.status.StatusProjectionService
 import ru.quipy.projections.task.TaskProjectionService
 import ru.quipy.projections.user.UserProjection
@@ -56,6 +58,9 @@ class EventSourcingLibConfiguration {
     private lateinit var userProjectionService: UserProjectionService
 
     @Autowired
+    private lateinit var projectProjectionService: ProjectProjectionService
+
+    @Autowired
     private lateinit var statusProjectionService: StatusProjectionService
 
     @Autowired
@@ -76,6 +81,7 @@ class EventSourcingLibConfiguration {
         subscriptionsManager.subscribe<UserAggregate>(userProjectionService)
         subscriptionsManager.subscribe<ProjectAggregate>(taskProjectionService)
         subscriptionsManager.subscribe<ProjectAggregate>(statusProjectionService)
+        subscriptionsManager.subscribe<ProjectAggregate>(projectProjectionService)
 
         // Demonstrates how you can set up the listeners to the event stream
         eventStreamManager.maintenance {

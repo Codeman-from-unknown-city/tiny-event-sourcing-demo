@@ -16,11 +16,9 @@ class ProjectProjectionService {
     lateinit var projectProjection: ProjectProjection
 
     @SubscribeEvent
-    fun create(event: ProjectCreatedEvent) = with(event) {
-        projectProjection.insert(ProjectProjectionData(id = event.projectId,
-                title = event.title, creatorId = event.creatorId, projectMemberIds = ArrayList<UUID>(),
-                defaultStatus = event.defaultStatus.id, tasks = ArrayList<UUID>(), projectStatus = arrayListOf(event.defaultStatus.id)))
-    }
+    fun create(event: ProjectCreatedEvent) = projectProjection.insert(ProjectProjectionData(id = event.projectId,
+            title = event.title, creatorId = event.creatorId, projectMemberIds = ArrayList<UUID>(),
+            defaultStatus = event.defaultStatus.id, tasks = ArrayList<UUID>(), projectStatus = arrayListOf(event.defaultStatus.id)))
 
     @SubscribeEvent
     fun changeTitle(event: ProjectTitleChangedEvent) = with(event) {
