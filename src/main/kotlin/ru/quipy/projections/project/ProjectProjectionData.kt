@@ -1,4 +1,4 @@
-package ru.quipy.projections.status
+package ru.quipy.projections.project
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document

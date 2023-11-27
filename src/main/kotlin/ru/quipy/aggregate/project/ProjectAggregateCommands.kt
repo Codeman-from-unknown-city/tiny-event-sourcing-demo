@@ -1,6 +1,7 @@
 package ru.quipy.aggregate.project
 
 import ru.quipy.api.project.*
+import ru.quipy.projections.project.ProjectProjection
 import ru.quipy.projections.task.TaskProjection
 import ru.quipy.projections.user.UserProjection
 import java.util.*
@@ -18,15 +19,8 @@ fun ProjectAggregateState.create(id: UUID, title: String, creatorId: UUID): Proj
     )
 }
 
-fun ProjectAggregateState.addUser(projectId: UUID, userId: UUID): AddUserToProjectEvent {
-    var userAlreadyExist = false;
-    this.projectMemberIds.forEach { element ->
-        if (element == userId){
-            userAlreadyExist = true;
-        }
-    }
-
-    if (userAlreadyExist){
+fun ProjectAggregateState.addUser(projectId: UUID, userId: UUID, projectProjection: ProjectProjection): AddUserToProjectEvent {
+    if (projectProjection.findById(projectId).get().projectMemberIds.contains(userId)){
         throw IllegalArgumentException("User already exist in this project: $userId")
     }
 
@@ -44,9 +38,10 @@ fun ProjectAggregateState.addStatus(name: String, color: String): StatusCreatedE
 fun ProjectAggregateState.removeStatus(
     statusId: UUID,
     projectId: UUID,
-    taskProjection: TaskProjection
+    taskProjection: TaskProjection,
+    projectProjection: ProjectProjection
 ): StatusDeletedEvent {
-    if (!projectStatus.containsKey(statusId)){
+    if (!projectProjection.findById(projectId).get().projectStatus.contains(projectId)){
         throw IllegalArgumentException("Status doesn't exists: $statusId")
     }
 
@@ -65,8 +60,8 @@ fun ProjectAggregateState.changeTaskTitle(taskId: UUID, title: String): TaskTitl
     return  TaskTitleChangedEvent(taskId = taskId, title = title)
 }
 
-fun ProjectAggregateState.changeTaskStatus(taskId: UUID, statusId: UUID): TaskStatusChangedEvent {
-    if (!projectStatus.containsKey(statusId)){
+fun ProjectAggregateState.changeTaskStatus(taskId: UUID, statusId: UUID, projectProjection: ProjectProjection): TaskStatusChangedEvent {
+    if (!projectProjection.findById(this.getId()).get().projectStatus.contains(statusId)){
         throw IllegalArgumentException("Status doesn't exists: $statusId")
     }
 

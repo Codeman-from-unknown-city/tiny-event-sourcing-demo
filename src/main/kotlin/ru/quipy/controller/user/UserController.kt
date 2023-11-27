@@ -56,4 +56,7 @@ class UserController(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
         }
     }
+
+    @GetMapping("/user/{userId}/allProjects")
+    fun getUserProjects(@PathVariable userId: UUID) = userService.getUserProjects(userId)
 }

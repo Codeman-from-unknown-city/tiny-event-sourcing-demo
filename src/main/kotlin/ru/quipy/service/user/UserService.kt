@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import ru.quipy.projections.status.StatusProjection
 import ru.quipy.projections.task.TaskProjection
 import ru.quipy.projections.user.UserProjection
+import ru.quipy.view.ProjectView
 import ru.quipy.view.StatusView
 import ru.quipy.view.TaskView
 import ru.quipy.view.UserView
@@ -20,6 +21,9 @@ class UserService {
 
     @Autowired
     private lateinit var statusProjection: StatusProjection
+
+    @Autowired
+    private lateinit var projectService: ProjectService
 
     fun findById(id: UUID): Optional<UserView> = UserView.fromProjection(userProjection.findById(id))
 
@@ -49,5 +53,13 @@ class UserService {
                     null
             TaskView.fromProjection(it, user, status)
         }.toMutableList()
+    }
+
+    fun getUserProjects(id: UUID): List<ProjectView> {
+        val projects =  projectService.getAllProjects()
+
+        return projects.filter {
+            it.projectMemberIds.contains(id)
+        }
     }
 }
