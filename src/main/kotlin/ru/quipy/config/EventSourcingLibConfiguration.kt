@@ -1,5 +1,6 @@
 package ru.quipy.config
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -9,8 +10,11 @@ import ru.quipy.aggregate.user.UserAggregate
 import ru.quipy.core.EventSourcingServiceFactory
 import ru.quipy.aggregate.project.ProjectAggregateState
 import ru.quipy.aggregate.user.UserAggregateState
-import ru.quipy.projections.AnnotationBasedProjectEventsSubscriber
-import ru.quipy.projections.UserViewService
+import ru.quipy.projections.project.ProjectProjectionService
+import ru.quipy.projections.status.StatusProjectionService
+import ru.quipy.projections.task.TaskProjectionService
+import ru.quipy.projections.user.UserProjection
+import ru.quipy.projections.user.UserProjectionService
 import ru.quipy.streams.AggregateEventStreamManager
 import ru.quipy.streams.AggregateSubscriptionsManager
 import java.util.*
@@ -45,16 +49,22 @@ class EventSourcingLibConfiguration {
     private lateinit var subscriptionsManager: AggregateSubscriptionsManager
 
     @Autowired
-    private lateinit var projectEventSubscriber: AnnotationBasedProjectEventsSubscriber
-
-    @Autowired
     private lateinit var eventSourcingServiceFactory: EventSourcingServiceFactory
 
     @Autowired
     private lateinit var eventStreamManager: AggregateEventStreamManager
 
     @Autowired
-    private lateinit var userViewService: UserViewService
+    private lateinit var userProjectionService: UserProjectionService
+
+    @Autowired
+    private lateinit var projectProjectionService: ProjectProjectionService
+
+    @Autowired
+    private lateinit var statusProjectionService: StatusProjectionService
+
+    @Autowired
+    private lateinit var taskProjectionService: TaskProjectionService
 
     /**
      * Use this object to create/update the aggregate
@@ -68,8 +78,10 @@ class EventSourcingLibConfiguration {
     @PostConstruct
     fun init() {
         // Demonstrates how to explicitly subscribe the instance of annotation based subscriber to some stream. See the [AggregateSubscriptionsManager]
-        subscriptionsManager.subscribe<ProjectAggregate>(projectEventSubscriber)
-        subscriptionsManager.subscribe<UserAggregate>(userViewService)
+        subscriptionsManager.subscribe<UserAggregate>(userProjectionService)
+        subscriptionsManager.subscribe<ProjectAggregate>(taskProjectionService)
+        subscriptionsManager.subscribe<ProjectAggregate>(statusProjectionService)
+        subscriptionsManager.subscribe<ProjectAggregate>(projectProjectionService)
 
         // Demonstrates how you can set up the listeners to the event stream
         eventStreamManager.maintenance {

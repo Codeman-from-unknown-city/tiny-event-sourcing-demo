@@ -8,7 +8,6 @@ import java.util.*
 // Service's business logic
 class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
     private lateinit var projectId: UUID
-    private var defaultStatus = StatusEntity(UUID.randomUUID(), projectId, null, null)
 
     var projectMemberIds = mutableListOf<UUID>()
     var projectStatus =  mutableMapOf<UUID, StatusEntity>()
@@ -16,16 +15,22 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
 
     lateinit var projectTitle: String
     lateinit var creatorId: UUID
+    lateinit var defaultStatusId: UUID
 
     override fun getId() = projectId
 
     // State transition functions which is represented by the class member function
     @StateTransitionFunc
     fun projectCreatedApply(event: ProjectCreatedEvent) {
+        val defaultStatus = StatusEntity.default(event.projectId)
         projectId = event.projectId
         projectTitle = event.title
         creatorId = event.creatorId
         projectMemberIds.add(creatorId)
+        with(event.defaultStatus) {
+            projectStatus[id] = this
+            defaultStatusId = id
+        }
     }
 
     @StateTransitionFunc
@@ -40,7 +45,7 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
 
     @StateTransitionFunc
     fun taskCreatedApply(event: TaskCreatedEvent) {
-        tasks[event.taskId] = TaskEntity(event.taskId, projectId, event.title, defaultStatus.id, null)
+        tasks[event.taskId] = TaskEntity(event.taskId, projectId, event.title, defaultStatusId, null)
     }
 
     @StateTransitionFunc
@@ -81,5 +86,9 @@ data class StatusEntity(
         val id: UUID = UUID.randomUUID(),
         val projectId: UUID,
         val name: String?,
-        val color: String?
-)
+        val color: String? = null
+) {
+    companion object {
+        fun default(projectId: UUID) = StatusEntity(projectId = projectId, name = "CREATED")
+    }
+}

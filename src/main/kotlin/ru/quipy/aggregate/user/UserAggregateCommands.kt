@@ -2,9 +2,22 @@ package ru.quipy.aggregate.user
 
 import ru.quipy.api.user.UserChangedNameEvent
 import ru.quipy.api.user.UserCreatedEvent
+import ru.quipy.service.user.UserService
 import java.util.*
 
-fun UserAggregateState.create(id: UUID, name: String, nickname: String, password: String): UserCreatedEvent {
+class UserAggregateError(message: String?): Error(message)
+
+fun UserAggregateState.create(
+    id: UUID,
+    name: String,
+    nickname: String,
+    password: String,
+    userService: UserService
+): UserCreatedEvent {
+    if (userService.checkIfUserExists(id))
+        throw UserAggregateError("User with `$id` id already exists")
+    if (name.isBlank() || nickname.isBlank() || password.isBlank())
+        throw UserAggregateError("Name, nickname and password mustn't be blank")
     return UserCreatedEvent(
         userId = id,
         firstname = name,
@@ -14,6 +27,10 @@ fun UserAggregateState.create(id: UUID, name: String, nickname: String, password
 }
 
 fun UserAggregateState.changeName(newName: String): UserChangedNameEvent {
+    if (newName.isBlank())
+        throw UserAggregateError("New name mustn't be blank")
+    if (newName == name)
+        throw UserAggregateError("New name equals to current name")
     return UserChangedNameEvent(
         userId = getId(),
         newName

@@ -1,6 +1,7 @@
 package ru.quipy.api.project
 
 import ru.quipy.aggregate.project.ProjectAggregate
+import ru.quipy.aggregate.project.StatusEntity
 import ru.quipy.core.annotations.DomainEvent
 import ru.quipy.domain.Event
 import java.util.*
@@ -23,6 +24,7 @@ class ProjectCreatedEvent(
     val projectId: UUID,
     val creatorId: UUID,
     val title: String,
+    val defaultStatus: StatusEntity,
     createdAt: Long = System.currentTimeMillis(),
 ) : Event<ProjectAggregate>(
     name = PROJECT_CREATED_EVENT,
